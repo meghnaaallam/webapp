@@ -1,0 +1,97 @@
+name: AMI Build
+
+on:
+  push:
+    branches:
+        - main
+
+jobs:
+  packer-build:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:latest
+        env:
+          POSTGRES_DB: ${{ secrets.PGDATABASE }}
+          POSTGRES_USER: ${{ secrets.PGUSER }}
+          POSTGRES_PASSWORD: ${{ secrets.PGPASSWORD }}
+          POSTGRES_PORT: ${{ secrets.PGPORT }}
+          POSTGRES_HOST: ${{ secrets.HOST }}
+          PORT: ${{ secrets.PORT }}
+        ports:
+          - 5432:5432
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+  
+    steps:
+
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '16.x'
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Run tests
+      run: npm run test
+      env:
+        HOST : ${{ secrets.HOST }}
+        DATABASE_USER : ${{ secrets.PGUSER }}
+        DATABASE_NAME : ${{ secrets.PGDATABASE }}
+        DATABASE_PASSWORD : ${{ secrets.PGPASSWORD }}
+        DATABASE_PORT : ${{ secrets.PGPORT }}
+        PORT : ${{ secrets.PORT }}
+
+    - name: Setup Packer
+      uses: hashicorp/setup-packer@main
+      id: setup
+      with:
+        version: "latest"
+
+    - name: Run Packer init
+      id: init
+      run: |
+        packer init packer
+
+    - name: Build AMI with Packer
+      run: |
+         PACKER_OUTPUT=$(packer build packer)
+          AMI_ID=$(echo "$PACKER_OUTPUT" | grep -oP 'AMI: \K(ami-[a-zA-Z0-9]+)')
+          echo "AMI_ID=$AMI_ID" >> $GITHUB_ENV
+          echo "::set-output name=ami_id::$AMI_ID"
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        PKR_VAR_aws-region: us-east-1
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+          aws-access-key-id: ${{ secrets.DEMO_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.DEMO_ACCESS_KEY }}
+          aws-region: us-east-1
+  
+
+    - name: Create New Launch Template Version
+      run: |
+          latest_version=$(aws ec2 describe-launch-template-versions --launch-template-name ami_launch_template --query 'LaunchTemplateVersions[-1].VersionNumber' --output text)
+          aws ec2 create-launch-template-version --launch-template-name ami_launch_template --source-version $latest_version --launch-template-data "{\"ImageId\":\"${{ env.AMI_ID}}\"}"
+    - name: Instance Refresh
+      run: |
+          aws autoscaling start-instance-refresh \
+            --auto-scaling-group-name auto_scaling_group \
+            --strategy Rolling \
+            --preferences '{"MinHealthyPercentage": 50, "InstanceWarmup": 60}'
+
+          while : ; do
+            STATUS=$(aws autoscaling describe-instance-refreshes --auto-scaling-group-name auto_scaling_group --query 'InstanceRefreshes[0].Status' --output text)
+            if [[ "$STATUS" == "Successful" || "$STATUS" == "Failed" || "$STATUS" == "Cancelled" ]]; then
+              echo "Instance refresh completed with status: $STATUS"
+              break
+            fi
+            echo "Waiting for instance refresh to complete..."
+            sleep 60
+          done
