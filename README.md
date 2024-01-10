@@ -117,3 +117,14 @@ To use this variables files when creating a golden image, use the build command 
 ```
 packer build --var-file=<variables-file>.pkrvars.hcl <build-config>.pkr.hcl
 ```
+
+### CI/CD
+
+This CI pipeline will run if any changes are committed to the master branch. Once the unit tests pass, the CI pipeline should check the validity of the packer build configuration and build the AMI Image, 
+Configure CloudWatch for logging, Amazon SNS Topic subscription configuration (*AWS Credentials should be provisioned to build AMI Images, I made use of Github secrets*)
+
+> Ideally, when I first developed this application, I've configured the CI/CD pipeline to check the packer validity whenever a PR is raised to the main branch and start building the AMI Images after the PR is merged.
+> But currently, I only have the above setup.
+
+
+I've used a .env file to build images locally and eventually used *Github Secrets*
