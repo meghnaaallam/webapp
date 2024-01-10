@@ -24,7 +24,7 @@ Users that are not authenticated do not have access to the above endpoints but c
 
 -  **systemD** to launch the app as soon as the application is deployed to EC2
 
-- I have implemented a small use-case of microservice, where an email will be triggered on successful assignment submission. If the assignment submitted is before the deadline then an unsuccessful submission email is sent.
+- I have implemented a small use-case of microservice, where an email will be triggered on successful assignment submission. If the assignment submitted is after the deadline then an unsuccessful submission email is sent.
 - The microservice is triggered via **Amazon SES** (I've configured a topic subscription and written the lambda function code [here](https://github.com/meghnaaallam/serverless.git) to publish AWS SNS messages to send emails
   
 - Email service used - Mailgun 
@@ -33,6 +33,7 @@ Users that are not authenticated do not have access to the above endpoints but c
 - `git` (configured with ssh) [[link](https://git-scm.com/downloads)]
 - `node` [[link](https://nodejs.org/en/download/)]
 - `Postman` for API testing [[link](https://www.postman.com/downloads/)]
+- `Postgres`
 - `env` file for local Postgres step
 
 
@@ -126,5 +127,3 @@ Configure CloudWatch for logging, Amazon SNS Topic subscription configuration (*
 > Ideally, when I first developed this application, I've configured the CI/CD pipeline to check the packer validity whenever a PR is raised to the main branch and start building the AMI Images after the PR is merged.
 > But currently, I only have the above setup.
 
-
-I've used a .env file to build images locally and eventually used *Github Secrets*
