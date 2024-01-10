@@ -64,18 +64,22 @@ The custom AMI should have the following features:
 **NOTE: The builder to be used is amazon-ebs.**
 
 OS: Ubuntu 22.04 LTS
+
 Build: built on the default VPC
+
 Device Name: /dev/sda1/
+
 Volume Size: 50GiB
+
 Volume Type: gp2
-Have valid provisioners.
-Pre-installed dependencies using a shell script.
-Web application software pre-installed on the AMI.
+
+Have valid provisioners. Pre-installed dependencies using a shell script.
 
 > I've written a shell script to install dependencies needed for the app to run on the EC2 instance
 
+
 ### Custom AMI creation
-To create the custom AMI from the .pkr.hcl template created earlier, use the commands given below:
+To create the custom AMI from the .pkr.hcl template as mentioned above, use the commands given below:
 
 ```js
 # Installs all packer plugins mentioned in the config template
