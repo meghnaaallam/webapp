@@ -25,7 +25,7 @@ Users that are not authenticated do not have access to the above endpoints but c
 -  **systemD** to launch the app as soon as the application is deployed to EC2
 
 - I have implemented a small use-case of microservice, where an email will be triggered on successful assignment submission. If the assignment submitted is before the deadline then an unsuccessful submission email is sent.
-- The microservice is triggered via **Amazon SES** (I've configured a topic subscription and written the serverless webhooks code [here](https://github.com/meghnaaallam/serverless.git) to publish AWS SNS messages to send emails
+- The microservice is triggered via **Amazon SES** (I've configured a topic subscription and written the lambda function code [here](https://github.com/meghnaaallam/serverless.git) to publish AWS SNS messages to send emails
   
 - Email service used - Mailgun 
 
