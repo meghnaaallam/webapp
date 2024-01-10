@@ -113,7 +113,7 @@ If you want to validate your build configuration, you can use the following comm
 packer validate -evaluate-datasources --var-file=<variables-file>.pkrvars.hcl <build-config>.pkr.hcl
 ```
 
-To use this variables files when creating a golden image, use the build command as shown:
+To use these variables files when creating an image, use the build command as shown:
 ```
 packer build --var-file=<variables-file>.pkrvars.hcl <build-config>.pkr.hcl
 ```
