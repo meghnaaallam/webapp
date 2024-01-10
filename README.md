@@ -109,14 +109,11 @@ packer build <filename>.pkr.hcl
 To prevent pushing sensitive details we can have variables in I've used packer variables with the extension .pkrvars.hcl.
 
 If you want to validate your build configuration, you can use the following command:
-
+```
 packer validate -evaluate-datasources --var-file=<variables-file>.pkrvars.hcl <build-config>.pkr.hcl
 ```
-NOTE: To use the -evaluate-datasources parameter, you'll have to update packer to v1.8.5 or greater. For more details, refer this issue.
-```
+
 To use this variables files when creating a golden image, use the build command as shown:
 ```
 packer build --var-file=<variables-file>.pkrvars.hcl <build-config>.pkr.hcl
 ```
-
-NOTE: Using variables is the preferred way/best practice to build a custom AMI using HCP Packer!
