@@ -1,7 +1,7 @@
 # Cloud Native Webapp - CSYE 6225
 
 ## About
-RESTful Backend API for an **Assignment Submission Portal** using Node.js, Express, Sequelize and Postgres Database to perform CRUD operations.  
+RESTful Backend API for an **Assignment Submission Portal** using Node.js, Express, and Sequelize to perform CRUD operations.  
 
 
 - The app creates users from ```./opt/users.csv``` file. Every user has an email and password as their credentials. Authorization is done using Base64
@@ -18,22 +18,22 @@ RESTful Backend API for an **Assignment Submission Portal** using Node.js, Expre
 
 Users that are not authenticated do not have access to the above endpoints but can access the following end-point
 
-- `GET /healthz` Health endpoint
+- `GET /healthz`: Performs a health check, verifying the connection to the database.
 
 - The app uses **Packer** to build AMI Images on AWS, *Pulumi* to upload the app to EC2 Instances that has auto-scaling groups set up See **Pulumi** code [here](https://github.com/meghnaaallam/iac-pulumi.git)
 
--  **systemD** to launch the app as soon as the application is deployed to EC2
+-  **statsD** to launch the app as soon as the application is deployed to EC2
 
 - I have implemented a small use-case of microservice, where an email will be triggered on successful assignment submission. If the assignment submitted is after the deadline then an unsuccessful submission email is sent.
 - The microservice is triggered via **Amazon SES** (I've configured a topic subscription and written the lambda function code [here](https://github.com/meghnaaallam/serverless.git) to publish AWS SNS messages to send emails
   
-- Email service used - Mailgun 
+- Email service used - **Mailgun**
+- **Winston** -  Winston is used for logging, providing both console and file-based logging
 
 ### Prerequisites
 - `git` (configured with ssh) [[link](https://git-scm.com/downloads)]
 - `node` [[link](https://nodejs.org/en/download/)]
 - `Postman` for API testing [[link](https://www.postman.com/downloads/)]
-- `Postgres`
 - `env` file for local Postgres step
 
 
