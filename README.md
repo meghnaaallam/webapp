@@ -1,5 +1,7 @@
 # Cloud Native Webapp - CSYE 6225
 
+![csye6225](https://github.com/user-attachments/assets/f6ee57f1-21c6-48bb-a960-453204e210c0)
+
 ## About
 RESTful Backend API for an **Assignment Submission Portal** using Node.js, Express, and Sequelize to perform CRUD operations.  
 
